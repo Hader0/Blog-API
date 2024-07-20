@@ -3,12 +3,12 @@ from init import db, ma
 # Creating a table in the database
 class User(db.Model):
     # Name of the table
-    __tablename__ = "user"
+    __tablename__ = "users"
     # Attributes of the table
     user_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     email = db.Column(db.String, nullable=False, unique=True)
-    password = db.Column(db.String, nullabe=False)
+    password = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
 class UserSchema(ma.Schema):
