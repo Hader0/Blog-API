@@ -8,3 +8,4 @@ flask_marshmallow
 marshmallow_sqlalchemy 
 flask_bcrypt 
 flask_jwt_extended
+python-dotenv
