@@ -1,3 +1,5 @@
+import os 
+
 from flask import Flask
 
 from init import db, ma, bcrypt, jwt
@@ -5,10 +7,10 @@ from init import db, ma, bcrypt, jwt
 def create_app():
     app = Flask(__name__)
 
-    # Connect to Database Blog_db as user Blog_dev
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://blog_dev:123456@localhost:5432/blog_db"
+    # Connect to Database Blog_db as user Blog_dev - os.environ.get is received from .env file
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 
-    app.config["JWT_SECRET_KEY"] = "secret"
+    app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 
     db.init_app(app)
     ma.init_app(app)
