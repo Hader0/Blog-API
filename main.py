@@ -23,4 +23,7 @@ def create_app():
     from controllers.auth_controller import auth_bp
     app.register_blueprint(auth_bp)
 
+    from controllers.post_controller import posts_bp
+    app.register_blueprint(posts_bp)
+
     return app
