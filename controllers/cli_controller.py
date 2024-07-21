@@ -1,7 +1,10 @@
 from flask import Blueprint
 
+from datetime import date
+
 from init import db, bcrypt
 from models.user import User
+from models.post import Post
 
 db_commands = Blueprint("db", __name__)
 
@@ -32,6 +35,29 @@ def seed_tables():
     ]
 
     db.session.add_all(users)
+
+    posts = [
+        Post(
+            title = "Post 1",
+            content = "Post 1 Content",
+            date = date.today(),
+            user = users[0] # The first user from the above User list is the one creating this post
+        ),
+        Post(
+            title = "Post 2",
+            content = "Post 2 Content",
+            date = date.today(),
+            user = users[0] # The first user from the above User list is the one creating this post
+        ),
+        Post(
+            title = "Post 3",
+            content = "Post 3 Content",
+            date = date.today(),
+            user = users[1] # The second user from the above User list is the one creating this post
+        )
+    ]
+
+    db.session.add_all(posts)
 
     db.session.commit()
 
