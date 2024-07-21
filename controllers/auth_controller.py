@@ -42,4 +42,21 @@ def register_user():
             # Unique violation
             return {"error": "Email address already in use"}, 409
 
-# @auth_bp.route("/login")
+@auth_bp.route("/login", methods=["POST"])
+def login_user():
+    # Get the data from the body of the request
+    body_data = request.get_json()
+    # Find the user in the DB with the email address
+    stmt = db.select(User).filter_by(email=body_data.get("email"))
+    user = db.session.scalar(stmt)
+    # If the user exists and password is correct
+    if user and bcrypt.check_password_hash(user.password, body_data.get("password")):
+        # Create JWT Token
+        token = create_access_token(identity=str(user.user_id), expires_delta=timedelta(days=1))
+        # Respond back
+        return {"email": user.email, "is_admin": user.is_admin, "token": token}
+
+    # Else
+    else:
+        # Respond with an error message
+        return {"error": "Invalid email or password"}, 401
