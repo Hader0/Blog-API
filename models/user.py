@@ -1,4 +1,5 @@
 from init import db, ma
+from marshmallow import fields
 
 # Creating a table in the database
 class User(db.Model):
@@ -11,9 +12,14 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
+    # Foreign Key relationship for the Post Table
+    posts = db.relationship('Post', back_populates="user")
+
 class UserSchema(ma.Schema):
+    posts = fields.List(fields.Nested('PostSchema'), exclude=["user"]) # Retreive all information from the post except for the user attribute as we will already have it
+
     class Meta:
-        fields = ("user_id", "name", "email", "password", "is_admin")
+        fields = ("user_id", "name", "email", "password", "is_admin", "posts")
 
 # To handle a single user object
 user_schema = UserSchema(exclude=["password"])
