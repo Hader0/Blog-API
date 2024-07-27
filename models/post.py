@@ -23,6 +23,7 @@ class PostSchema(ma.Schema):
 
     class Meta:
         fields = ("post_id", "title", "content", "date", "user", "comments")
+        ordered= True
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)

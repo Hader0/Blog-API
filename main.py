@@ -7,6 +7,8 @@ from init import db, ma, bcrypt, jwt
 def create_app():
     app = Flask(__name__)
 
+    app.json.sort_keys = False
+
     # Connect to Database Blog_db as user Blog_dev - os.environ.get is received from .env file
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 
