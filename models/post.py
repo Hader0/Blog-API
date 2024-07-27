@@ -19,11 +19,11 @@ class Post(db.Model):
 class PostSchema(ma.Schema):
 
     user = fields.Nested('UserSchema', only=["name"]) # Recieving only the name attribute from the user
-    comments = fields.List(fields.Nested("CommentSchema", exclude=["card"]))
+    comments = fields.List(fields.Nested("CommentSchema", exclude=["post"]))
 
     class Meta:
         fields = ("post_id", "title", "content", "date", "user", "comments")
-        ordered= True
+        ordered = True
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)

@@ -5,8 +5,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from init import db
 from models.post import Post, post_schema, posts_schema
+from controllers.comment_controller import comments_bp
 
 posts_bp = Blueprint('posts', __name__, url_prefix="/posts")
+posts_bp.register_blueprint(comments_bp)
 
 # /posts - GET/fetch all posts
 # /post/<id> - GET/fetch a single post
@@ -17,7 +19,7 @@ posts_bp = Blueprint('posts', __name__, url_prefix="/posts")
 # /posts - GET/fetch all posts
 @posts_bp.route("/") # / = /posts
 def get_all_posts():
-    # Fetch all cards then order then by date in descending order
+    # Fetch all posts then order then by date in descending order
     stmt = db.select(Post).order_by(Post.date.desc())
     posts = db.session.scalars(stmt)
     return posts_schema.dump(posts)
