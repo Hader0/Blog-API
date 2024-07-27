@@ -6,9 +6,12 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from init import db
 from models.post import Post, post_schema, posts_schema
 from controllers.comment_controller import comments_bp
+from controllers.like_controller import likes_bp
+from utils import authorise_as_admin
 
 posts_bp = Blueprint('posts', __name__, url_prefix="/posts")
 posts_bp.register_blueprint(comments_bp)
+posts_bp.register_blueprint(likes_bp)
 
 # /posts - GET/fetch all posts
 # /post/<id> - GET/fetch a single post
@@ -62,6 +65,10 @@ def delete_post(single_post_id):
     post = db.session.scalar(stmt)
     # If Post
     if post:
+        # Check whether the user is an admin or not
+        is_admin = authorise_as_admin()
+        if not is_admin or str(post.user_id) != get_jwt_identity():
+            return {"error": "User is not authorised to perform this action"}, 403
         # Delete a post
         db.session.delete(post)
         db.session.commit()
@@ -73,6 +80,7 @@ def delete_post(single_post_id):
     
 # /posts/<id> - PUT, PATCH/edit a post
 @posts_bp.route("/<single_post_id>", methods=["PUT", "PATCH"])
+@jwt_required() # Token is required by logging in via a created user and using the JWT Token
 def update_post(single_post_id):
     # Get the data from the body of the request
     body_data = post_schema.load(request.get_json(), partial=True)
@@ -81,6 +89,9 @@ def update_post(single_post_id):
     post = db.session.scalar(stmt)
     # If Post
     if post:
+        # Checking if the user is the owner of the post
+        if str(post.user_id) != get_jwt_identity():
+            return {"error": "You are not the owner of the post"}, 403
         # Update the fields as required
         post.title = body_data.get("title") or post.title
         post.content = body_data.get("content") or post.content
