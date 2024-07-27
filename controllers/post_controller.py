@@ -39,7 +39,7 @@ def get_one_post(single_post_id):
 @jwt_required() # Token is required by logging in via a created user and using the JWT Token
 def create_post():
     # Get the data from the body of the request
-    body_data = request.get_json()
+    body_data = post_schema.load(request.get_json())
     # Create a new Post Model instance
     post = Post(
         title = body_data.get("title"),
@@ -75,7 +75,7 @@ def delete_post(single_post_id):
 @posts_bp.route("/<single_post_id>", methods=["PUT", "PATCH"])
 def update_post(single_post_id):
     # Get the data from the body of the request
-    body_data = request.get_json()
+    body_data = post_schema.load(request.get_json(), partial=True)
     # Get the post from the database
     stmt = db.select(Post).filter_by(post_id = single_post_id)
     post = db.session.scalar(stmt)

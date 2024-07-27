@@ -1,5 +1,6 @@
 from init import db, ma
 from marshmallow import fields
+from marshmallow.validate import Length, And, Regexp
 
 class Post(db.Model):
     __tablename__ = "posts"
@@ -20,6 +21,11 @@ class PostSchema(ma.Schema):
 
     user = fields.Nested('UserSchema', only=["name"]) # Recieving only the name attribute from the user
     comments = fields.List(fields.Nested("CommentSchema", exclude=["post"]))
+
+    title = fields.String(required=True, validate=And(
+        Length(min=2, error="Title must be at least 2 characters long"),
+        Regexp('^[A-Za-z0-9 ]+$', error="Title must only include alphanumeric characters")
+    ))
 
     class Meta:
         fields = ("post_id", "title", "content", "date", "user", "comments")
