@@ -16,18 +16,20 @@ class User(db.Model):
     # Foreign Key relationship for the Post Table
     posts = db.relationship('Post', back_populates="user")
     comments = db.relationship('Comment', back_populates="user")
+    likes = db.relationship('Like', back_populates="user")
 
 
 class UserSchema(ma.Schema):
     posts = fields.List(fields.Nested('PostSchema'), exclude=["user"]) # Retreive all information from the post except for the user attribute as we will already have it
     comments = fields.List(fields.Nested('CommentSchema'), exclude=["user"])# Retreive all information from the comment except for the user attribute as we will already have it
+    likes = fields.List(fields.Nested('LikeSchema', exclude=["user"]))
 
     email = fields.String(required=True, validate=Regexp("^\S+@\S+\.\S+$", error="Invalid Email Format"))
 
     password = fields.String(required=True, validate=Regexp("^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", error="Password must be a minimum of eight characters, at least one letter and one number"))
 
     class Meta:
-        fields = ("user_id", "name", "email", "password", "is_admin", "posts", "comments")
+        fields = ("user_id", "name", "email", "password", "is_admin", "posts", "comments", "likes")
 
 # To handle a single user object
 user_schema = UserSchema(exclude=["password"])
