@@ -14,13 +14,15 @@ class Post(db.Model):
 
     # Get the Foreign Key User's information
     user = db.relationship('User', back_populates="posts")
+    comments = db.relationship('Comment', back_populates="post", cascade="all, delete")
 
 class PostSchema(ma.Schema):
 
     user = fields.Nested('UserSchema', only=["name"]) # Recieving only the name attribute from the user
+    comments = fields.List(fields.Nested("CommentSchema", exclude=["card"]))
 
     class Meta:
-        fields = ("post_id", "title", "content", "date", "user")
+        fields = ("post_id", "title", "content", "date", "user", "comments")
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)

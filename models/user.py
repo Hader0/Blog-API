@@ -14,12 +14,15 @@ class User(db.Model):
 
     # Foreign Key relationship for the Post Table
     posts = db.relationship('Post', back_populates="user")
+    comments = db.relationship('Comment', back_populates="user")
+
 
 class UserSchema(ma.Schema):
     posts = fields.List(fields.Nested('PostSchema'), exclude=["user"]) # Retreive all information from the post except for the user attribute as we will already have it
+    comments = fields.List(fields.Nested('CommentSchema'), exclude=["user"])# Retreive all information from the comment except for the user attribute as we will already have it
 
     class Meta:
-        fields = ("user_id", "name", "email", "password", "is_admin", "posts")
+        fields = ("user_id", "name", "email", "password", "is_admin", "posts", "comments")
 
 # To handle a single user object
 user_schema = UserSchema(exclude=["password"])
